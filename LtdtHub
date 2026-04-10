@@ -1,0 +1,159 @@
+-- TABS
+local Modes = Window:CreateTab("Modes", 4483362458)
+local ESP = Window:CreateTab("ESP", 4483362458)
+local Auto = Window:CreateTab("Auto", 4483362458)
+local Entity = Window:CreateTab("Entity", 4483362458)
+local LibraryTab = Window:CreateTab("Library", 4483362458)
+
+local toggles = {}
+
+--------------------------------------------------
+-- 🔥 MODES (GỘP)
+--------------------------------------------------
+
+local function loadScript(url)
+pcall(function()
+loadstring(game:HttpGet(url))()
+end)
+end
+
+Modes:CreateButton({Name="Degenerate Mode",Callback=function()
+loadScript("https://raw.githubusercontent.com/Not-Guestly/Modes/main/Degenerate-Mode-Made-By-Guestly")
+end})
+
+Modes:CreateButton({Name="Psychotic Mode",Callback=function()
+loadScript("https://raw.githubusercontent.com/realbluedeptrai/Psychoti/main/Psychotic-remake.lua")
+end})
+
+Modes:CreateButton({Name="Horror Mode",Callback=function()
+loadScript("https://raw.githubusercontent.com/thelostw3r/Mods/main/HorrorMode.lua")
+end})
+
+Modes:CreateButton({Name="Hardcore Mode",Callback=function()
+loadScript("https://raw.githubusercontent.com/chubeteliet-cpu/Hardcore-rework-upt-/main/Hardcore-rework-update-bychubeteliet")
+end})
+
+Modes:CreateButton({Name="Meme Mode",Callback=function()
+loadScript("https://raw.githubusercontent.com/chubeteliet-cpu/meme-mode-m-p/main/Meme-mode-ma-hoa")
+end})
+
+--------------------------------------------------
+-- 👁 ESP (FIX)
+--------------------------------------------------
+
+ESP:CreateToggle({Name="🔑 Key ESP",Callback=function(v) toggles.key=v end})
+ESP:CreateToggle({Name="🎛 Lever ESP",Callback=function(v) toggles.lever=v end})
+ESP:CreateToggle({Name="🪙 Gold ESP",Callback=function(v) toggles.gold=v end})
+ESP:CreateToggle({Name="🚪 Door ESP",Callback=function(v) toggles.door=v end})
+ESP:CreateToggle({Name="👁 Entity ESP",Callback=function(v) toggles.entity=v end})
+
+task.spawn(function()
+while task.wait(1) do
+for _,v in pairs(workspace:GetDescendants()) do
+
+local function HL(obj)
+if obj and not obj:FindFirstChild("HL") then
+local h=Instance.new("Highlight")
+h.Name="HL"
+h.Parent=obj
+end
+end
+
+if toggles.key and v.Name=="KeyObtain" then HL(v) end
+if toggles.lever and v.Name=="LeverForGate" then HL(v) end
+if toggles.gold and v.Name=="GoldPile" then HL(v) end
+if toggles.door and v.Name=="Door" then HL(v) end
+if toggles.entity and (v.Name=="RushMoving" or v.Name=="AmbushMoving") then HL(v) end
+
+end
+end
+end)
+
+--------------------------------------------------
+-- 🤖 AUTO (FIX)
+--------------------------------------------------
+
+Auto:CreateToggle({Name="🚪 Auto Door",Callback=function(v) toggles.autodoor=v end})
+Auto:CreateToggle({Name="🧲 Item Aura",Callback=function(v) toggles.aura=v end})
+
+task.spawn(function()
+while task.wait(0.4) do
+local char = game.Players.LocalPlayer.Character
+if not char then continue end
+
+-- AUTO DOOR
+if toggles.autodoor then
+for _,v in pairs(workspace:GetDescendants()) do
+local p = v:FindFirstChildOfClass("ProximityPrompt")
+if p then
+pcall(function()
+p:InputHoldBegin()
+task.wait(0.1)
+p:InputHoldEnd()
+end)
+end
+end
+end
+
+-- ITEM AURA
+if toggles.aura then
+for _,v in pairs(workspace:GetDescendants()) do
+if v:IsA("Tool") and v:FindFirstChild("Handle") then
+v.Handle.CFrame = char.HumanoidRootPart.CFrame
+end
+end
+end
+
+end
+end)
+
+--------------------------------------------------
+-- 🛡 ENTITY
+--------------------------------------------------
+
+Entity:CreateButton({
+Name="🛡 God Mode",
+Callback=function()
+local hum = game.Players.LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
+if hum then hum:SetStateEnabled(Enum.HumanoidStateType.Dead,false) end
+end})
+
+Entity:CreateToggle({Name="🚫 Anti Rush",Callback=function(v) toggles.rush=v end})
+Entity:CreateToggle({Name="🚫 Anti Ambush",Callback=function(v) toggles.ambush=v end})
+Entity:CreateToggle({Name="👁 Anti Screech",Callback=function(v) toggles.screech=v end})
+
+workspace.ChildAdded:Connect(function(v)
+if toggles.rush and v.Name=="RushMoving" then v:Destroy() end
+if toggles.ambush and v.Name=="AmbushMoving" then v:Destroy() end
+if toggles.screech and v.Name=="Screech" then v:Destroy() end
+end)
+
+--------------------------------------------------
+-- 📚 LIBRARY CODE (HIỆN MẬT KHẨU)
+--------------------------------------------------
+
+LibraryTab:CreateButton({
+Name="📚 Show Library Code",
+Callback=function()
+
+local hints = {}
+
+for _,v in pairs(workspace:GetDescendants()) do
+if v.Name=="HintPaper" and v:FindFirstChild("UI") then
+local txt = v.UI:FindFirstChildWhichIsA("TextLabel")
+if txt then table.insert(hints, txt.Text) end
+end
+end
+
+if #hints > 0 then
+game.StarterGui:SetCore("SendNotification",{
+Title="Library Code",
+Text=table.concat(hints," | "),
+Duration=10
+})
+else
+warn("Chưa có giấy!")
+end
+
+end
+})
